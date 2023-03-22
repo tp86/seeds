@@ -8,13 +8,7 @@ Simple test runner for Fennel.
 
 ### Setup
 
-Running
-```bash
-make setup
-```
-will install dependencies in `lib/` located in current working directory (the
-directory from which `make -C <tester-location>` was invoked. Git repositories
-will be cloned into `.libsrc/`.
+Obtain dependencies and setup correct `package.path` and `package.cpath`.
 
 ## Usage
 
