@@ -41,12 +41,6 @@
       (table.insert test-files file)))
   test-files)
 
-(fn rewrite-arg [args]
-  (each [i value (ipairs args)]
-    (tset arg i value))
-  (for [i (+ 1 (length args)) (length arg)]
-    (tset arg i nil)))
-
 (fn collect-test-instances [test-files]
   (let [suites (collect [_ test-file (ipairs test-files)]
                  test-file (dofile test-file {:correlate true}))
@@ -67,5 +61,4 @@
       runner (lu.LuaUnit.new)
       test-files (collect-test-files (or test-paths))
       instances (collect-test-instances test-files)]
-  (rewrite-arg runner-args)
-  (runner:runSuiteByInstances instances))
+  (runner:runSuiteByInstances instances runner-args))
