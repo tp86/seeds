@@ -1,0 +1,71 @@
+#!/usr/bin/env fennel
+(local {: dofile} (require :fennel))
+(local lu (require :luaunit))
+(local lfs (require :lfs))
+
+(local [dirsep] (icollect [line (package.config:gmatch "[^\n+]")] line))
+
+(fn partition [tbl by-fn]
+  (local partitions {})
+  (each [_ val (ipairs tbl)]
+    (let [part (by-fn val)]
+      (when (not (. partitions part))
+        (tset partitions part []))
+      (table.insert (. partitions part) val)))
+  partitions)
+
+(fn dir? [path]
+  (let [attrs (lfs.attributes path)]
+    (when (= attrs nil)
+      (error (.. "File or directory not found: " path) 0))
+    (= attrs.mode :directory)))
+
+(local test-file-pattern ".*%.fnl$")
+
+(fn find-files [path ?found-files]
+  (local found-files (or ?found-files []))
+  (if
+    (dir? path)
+    (each [item (lfs.dir path)]
+      (when (and (not= item "..") (not= item "."))
+        (let [item-path (.. path dirsep item)]
+          (find-files item-path found-files))))
+    (path:match test-file-pattern)
+    (table.insert found-files path))
+  found-files)
+
+(fn collect-test-files [paths]
+  (local test-files [])
+  (each [_ path (ipairs paths)]
+    (each [_ file (ipairs (find-files path))]
+      (table.insert test-files file)))
+  test-files)
+
+(fn rewrite-arg [args]
+  (each [i value (ipairs args)]
+    (tset arg i value))
+  (for [i (+ 1 (length args)) (length arg)]
+    (tset arg i nil)))
+
+(fn collect-test-instances [test-files]
+  (let [suites (collect [_ test-file (ipairs test-files)]
+                 test-file (dofile test-file {:correlate true}))
+        instances []]
+    (each [suite-file suite (pairs suites)]
+      (each [name instance (pairs suite)]
+        (table.insert instances [(.. suite-file "::" name) instance])))
+    instances))
+
+(let [{"-" runner-args "" test-paths} (partition arg #(: $ :match "^(%-?)"))
+      runner-args (accumulate [args []
+                               _ option (ipairs (or runner-args []))]
+                    (let [(name value) (option:match "(%S+)%s*(.*)")]
+                      (doto args
+                            (table.insert name)
+                            (table.insert (if (< 0 (length value)) value)))))
+      test-paths (or test-paths ["test"])
+      runner (lu.LuaUnit.new)
+      test-files (collect-test-files (or test-paths))
+      instances (collect-test-instances test-files)]
+  (rewrite-arg runner-args)
+  (runner:runSuiteByInstances instances))
