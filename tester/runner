@@ -61,4 +61,4 @@
       runner (lu.LuaUnit.new)
       test-files (collect-test-files (or test-paths))
       instances (collect-test-instances test-files)]
-  (runner:runSuiteByInstances instances runner-args))
+  (runner:runSuiteByInstances instances (table.unpack runner-args)))
