@@ -21,7 +21,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Runs a single command using the runners shell
-      - run: echo ${{ github.event.pull_request }}
+      - run: echo ${{ github.event.pull_request.comments(first=1) }}
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
