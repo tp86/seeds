@@ -1,0 +1,10 @@
+-- example .luacov configuration file
+include = {
+  "src/.*$",
+}
+exclude = {
+  "src/fennel/.*$",
+}
+reporter = "fnlcov" -- required for correct report generation
+runreport = true
+deletestats = true

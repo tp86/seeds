@@ -68,4 +68,4 @@
       test-files (collect-test-files (or test-paths))
       instances (collect-test-instances test-files)]
   (rewrite-arg runner-args)
-  (runner:runSuiteByInstances instances))
+  (os.exit (runner:runSuiteByInstances instances)))
