@@ -1,0 +1,9 @@
+-- example .luacov configuration file
+include = {
+  "src/.*$",
+}
+exclude = {
+  "src/fennel/.*$",
+}
+runreport = true
+deletestats = true
