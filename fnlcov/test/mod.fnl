@@ -3,7 +3,13 @@
 
 (local {: func} (require :fnl.mod))
 
-(test-fn func-test
+(test-fn fnl-test
   (lu.assertEquals [2] (func)))
 
-{: func-test}
+(local {:func lua-func} (require :lua.mod))
+
+(test-fn lua-test
+  (lu.assertEquals [2] (lua-func)))
+
+{: fnl-test
+ : lua-test}

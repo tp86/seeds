@@ -5,7 +5,7 @@
 (tset package.searchers
       (length package.searchers)
       correlating-searcher)
-;; find first searcher installed by Fennel (based on debug.getinfo) and replace with correlating-searcher
-;; patch for luacov reporter
-(require :fnlcov.reporter-patch)
+;; TODO: find first searcher installed by Fennel (based on debug.getinfo) and replace with correlating-searcher
+;; patch for luacov reporter if runreport = true
+(fennel.dofile "fnlcov/io-patch.fnl")
 (require :luacov)

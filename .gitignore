@@ -1,3 +1,4 @@
 lib/
 .libsrc/
 **/env/local
+luacov.*.out

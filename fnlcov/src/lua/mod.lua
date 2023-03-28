@@ -1,6 +1,8 @@
  local function func()
- print("func")
+   print("func")
+   return {2}
+ end
 
- return {2} end
-
- return {func = func}
+ return {
+   func = func
+ }

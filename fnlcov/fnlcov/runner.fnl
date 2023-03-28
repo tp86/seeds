@@ -1,3 +1,3 @@
+;; execute luacov runner from Fennel, so it is aware of fennel sources
 (local runner (require :luacov.runner))
-(require :fnlcov.reporter-patch)
 (runner.run_report)
