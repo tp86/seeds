@@ -1,5 +1,5 @@
 #!/usr/bin/env fennel
-(local {: dofile} (require :fennel))
+(local fennel (require :fennel))
 (local lu (require :luaunit))
 (local lfs (require :lfs))
 
@@ -49,23 +49,27 @@
 
 (fn collect-test-instances [test-files]
   (let [suites (collect [_ test-file (ipairs test-files)]
-                 test-file (dofile test-file {:correlate true}))
+                 test-file (fennel.dofile test-file {:correlate true}))
         instances []]
     (each [suite-file suite (pairs suites)]
       (each [name instance (pairs suite)]
         (table.insert instances [(.. suite-file "::" name) instance])))
     instances))
 
-(let [{"-" runner-args "" test-paths} (partition arg #(: $ :match "^(%-?)"))
-      runner-args (accumulate [args []
-                               _ option (ipairs (or runner-args []))]
-                    (let [(name value) (option:match "(%S+)%s*(.*)")]
-                      (doto args
-                            (table.insert name)
-                            (table.insert (if (< 0 (length value)) value)))))
-      test-paths (or test-paths ["test"])
-      runner (lu.LuaUnit.new)
-      test-files (collect-test-files (or test-paths))
-      instances (collect-test-instances test-files)]
-  (rewrite-arg runner-args)
-  (os.exit (runner:runSuiteByInstances instances)))
+(fn run [args]
+  (let [{"-" runner-args "" test-paths} (partition args #(: $ :match "^(%-?)"))
+        runner-args (accumulate [args []
+                                 _ option (ipairs (or runner-args []))]
+                      (let [(name value) (option:match "(%S+)%s*(.*)")]
+                        (doto args
+                              (table.insert name)
+                              (table.insert (if (< 0 (length value)) value)))))
+        test-paths (or test-paths ["test"])
+        runner (lu.LuaUnit.new)
+        test-files (collect-test-files test-paths)
+        instances (collect-test-instances test-files)]
+    (rewrite-arg runner-args)
+    (os.exit (runner:runSuiteByInstances instances))))
+
+(let [args (if ... [...] arg)]
+  (run args))
