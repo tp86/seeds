@@ -52,8 +52,9 @@
                  test-file (fennel.dofile test-file {:correlate true}))
         instances []]
     (each [suite-file suite (pairs suites)]
-      (each [name instance (pairs suite)]
-        (table.insert instances [(.. suite-file "::" name) instance])))
+      (let [suite-file (suite-file:gsub "%.[^.]*$" "")]
+        (each [name instance (pairs suite)]
+          (table.insert instances [(.. suite-file "::" name) instance]))))
     instances))
 
 (fn run [args]
